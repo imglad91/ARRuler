@@ -14,6 +14,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
 
     @IBOutlet var sceneView: ARSCNView!
     var dotNodes = [SCNNode]()
+    var textNode = SCNNode()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,6 +47,15 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        
+        if dotNodes.count >= 2 {
+            for dot in dotNodes {
+                dot.removeFromParentNode()
+            }
+            dotNodes = [SCNNode]()
+            textNode.removeFromParentNode()
+        }
+        
         print("Touched the screen")
         if let touchLocation = touches.first?.location(in: sceneView) {
             let hitTestResults = sceneView.hitTest(touchLocation, types: .featurePoint)
@@ -99,7 +109,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     func updateText(text : String, atPosition : SCNVector3) {
         let textGeometry = SCNText(string: text, extrusionDepth: 0)
         textGeometry.firstMaterial?.diffuse.contents = UIColor.red
-        let textNode = SCNNode()
+        
         textNode.geometry = textGeometry
         textNode.position = SCNVector3(atPosition.x, atPosition.y, atPosition.z-0.3)
         textNode.scale = SCNVector3(0.01, 0.01, 0.01)
